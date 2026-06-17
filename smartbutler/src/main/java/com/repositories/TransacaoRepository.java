@@ -28,7 +28,7 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Integer> {
     value = """
         SELECT SUM(valor)
         FROM transacao
-        WHERE utilizador_id = :id
+        WHERE utilizador_id = :id AND tipo = 'DESPESA'
         """,
         nativeQuery = true
     )
@@ -43,7 +43,7 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Integer> {
         FROM transacao t
         JOIN categoria c 
             ON t.categoria_id = c.id
-        WHERE t.utilizador_id = :id
+        WHERE t.utilizador_id = :id AND tipo = 'DESPESA'
         GROUP BY c.nome
     """,
         nativeQuery = true
@@ -68,7 +68,7 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Integer> {
     value = """
         SELECT SUM(valor)
         FROM transacao
-        WHERE utilizador_id = :id
+        WHERE utilizador_id = :id AND tipo = 'DESPESA'
         AND data_transacao BETWEEN :inicio AND :fim
     """,
     nativeQuery = true
@@ -79,6 +79,18 @@ public interface TransacaoRepository extends JpaRepository<Transacao, Integer> {
             LocalDate fim
     );
 
+    @Query(
+    value = """
+        SELECT SUM(valor)
+        FROM Transacao
+        WHERE utilizador_id = :id
+        AND tipo = 'RECEITA'
+        """,
+     nativeQuery = true)
+    BigDecimal totalReceitas(Integer id);
 
+
+
+    
 }
 

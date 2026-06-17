@@ -13,22 +13,18 @@ public class Categoria {
     private Integer id;
 
     private String nome;
-    private String descricao;
 
-    public Categoria(String nome,String descricao) {
+    public Categoria(String nome) {
         this.nome = nome;
-        this.descricao = descricao;
     }
 
     public Categoria() {
         this.nome = "";
-        this.descricao = "";
     }
 
     public Categoria(Categoria c) {
         this.id = c.getId();
         this.nome = c.getNome();
-        this.descricao = c.getDescricao();
     }
 
     public Integer getId() {
@@ -47,14 +43,6 @@ public class Categoria {
         this.nome = nome;
     }
 
-    public String getDescricao() {
-        return descricao;
-    }
-
-    public void setDescricao(String descricao) {
-        this.descricao = descricao;
-    }
-
     public Categoria clone() {
         return new Categoria(this);
     }
@@ -68,8 +56,7 @@ public class Categoria {
 
         Categoria c = (Categoria) o;
         return Objects.equals(this.id,c.getId()) &&
-               c.getNome().equals(this.nome) &&
-               c.getDescricao().equals(this.descricao);
+               c.getNome().equals(this.nome);
     }
 
     public String toString() {

@@ -4,6 +4,8 @@ import java.math.BigDecimal;
 import java.time.LocalDate;
 import java.util.Objects;
 
+import com.enums.TipoTransacao;
+
 import jakarta.persistence.*;
 
 @Entity
@@ -31,6 +33,10 @@ public class Transacao {
 
     private String descricao;
 
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoTransacao tipo;
+
     @Column(
         precision = 10,
         scale = 2,
@@ -41,10 +47,11 @@ public class Transacao {
     @Column(name = "data_transacao", nullable = false)
     private LocalDate dataTransacao;
 
-    public Transacao(Utilizador u,Categoria c, String descricao, BigDecimal valor) {
+    public Transacao(Utilizador u,Categoria c, String descricao,TipoTransacao tipo, BigDecimal valor) {
         this.utilizador = u;
         this.categoria = c;
         this.descricao = descricao;
+        this.tipo = tipo;
         this.valor = valor;
         this.dataTransacao = LocalDate.now();
     }
@@ -52,6 +59,7 @@ public class Transacao {
     public Transacao() {
         this.utilizador = new Utilizador();
         this.categoria = new Categoria();
+        this.tipo = null;
         this.descricao = "";
         this.valor = null;
         this.dataTransacao = LocalDate.now();
@@ -62,6 +70,7 @@ public class Transacao {
         this.utilizador = t.getUtilizador();
         this.categoria = t.getCategoria();
         this.descricao = t.getDescricao();
+        this.tipo = t.getTipo();
         this.valor = t.getValor();
         this.dataTransacao = this.getDataTransacao();
     }
@@ -80,6 +89,14 @@ public class Transacao {
 
     public void setUtilizador(Utilizador utilizador) {
         this.utilizador = utilizador;
+    }
+
+    public TipoTransacao getTipo() {
+        return tipo;
+    }
+
+    public void setTipo(TipoTransacao tipo) {
+        this.tipo = tipo;
     }
 
     public Categoria getCategoria() {
@@ -131,12 +148,13 @@ public class Transacao {
                t.getCategoria().equals(this.categoria) &&
                t.getDescricao().equals(this.descricao) &&
                t.getValor().equals(this.valor) &&
-               t.getDataTransacao().equals(this.dataTransacao);
+               t.getDataTransacao().equals(this.dataTransacao) &&
+               t.getTipo().equals(this.tipo);
     }
 
     public String toString() {
         return "user = " + this.utilizador + ", categoria = " + this.categoria
-            + ", valor = " + this.valor + ", data = " + this.dataTransacao;
+            + ", valor = " + this.valor + ", data = " + this.dataTransacao + ", tipo = " + this.tipo;
     }
 
 }
