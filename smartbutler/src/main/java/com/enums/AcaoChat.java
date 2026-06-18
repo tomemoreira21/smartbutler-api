@@ -2,6 +2,7 @@ package com.enums;
 
 public enum AcaoChat {
     CRIAR_TRANSACAO,
+    CONSULTAR_TODAS_TRANSACOES,
     CONSULTAR_SALDO,
     ULTIMAS_TRANSACOES,
     GASTOS_POR_CATEGORIA,

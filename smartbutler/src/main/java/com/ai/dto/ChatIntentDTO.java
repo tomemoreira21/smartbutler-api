@@ -3,18 +3,17 @@ package com.ai.dto;
 import java.math.BigDecimal;
 import java.time.LocalDate;
 import com.enums.AcaoChat;
-import com.enums.TipoTransacao;
 
 public class ChatIntentDTO {
     private AcaoChat acao;
     private String categoria;
     private BigDecimal valor;
     private String descricao;
-    private TipoTransacao tipo;
+    private String tipo;
     private LocalDate dataInicio;
     private LocalDate dataFim;
 
-    public ChatIntentDTO(AcaoChat acao, String categoria, BigDecimal valor, String descricao, TipoTransacao tipo, LocalDate inicio, LocalDate fim) {
+    public ChatIntentDTO(AcaoChat acao, String categoria, BigDecimal valor, String descricao, String tipo, LocalDate inicio, LocalDate fim) {
         this.acao = acao;
         this.categoria = categoria;
         this.valor = valor;
@@ -72,11 +71,11 @@ public class ChatIntentDTO {
         this.descricao = descricao;
     }
 
-    public TipoTransacao getTipo() {
+    public String getTipo() {
         return tipo;
     }
 
-    public void setTipo(TipoTransacao tipo) {
+    public void setTipo(String tipo) {
         this.tipo = tipo;
     }
 
