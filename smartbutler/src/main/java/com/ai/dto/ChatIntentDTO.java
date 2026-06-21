@@ -79,8 +79,8 @@ public class ChatIntentDTO {
         this.tipo = tipo;
     }
 
-    
-    
-
+    public String toString() {
+        return "acao = " + this.acao;
+    }
 
 }

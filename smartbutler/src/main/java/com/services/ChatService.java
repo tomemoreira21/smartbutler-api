@@ -1,14 +1,15 @@
 package com.services;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
 import org.springframework.stereotype.Service;
 
+import com.actions.ChatAction;
 import com.ai.dto.ChatIntentDTO;
 import com.ai.dto.ChatResponseDTO;
-import com.dto.CriarTransacaoDTO;
-import com.entities.Transacao;
+import com.enums.AcaoChat;
 
 import tools.jackson.databind.ObjectMapper;
 
@@ -17,15 +18,19 @@ public class ChatService {
     private final PromptService promptService;
     private final OllamaService ollamaService;
     private final ObjectMapper objectMapper; // conversão de JSON -> objetos Java
-    private final TransacaoService transacaoService;
-    private final SaldoService saldoService;
+    
+    private Map<AcaoChat, ChatAction> actions;
 
-    public ChatService(PromptService promptService, OllamaService ollamaService, ObjectMapper objectMapper, TransacaoService transacaoService, SaldoService saldoService) {
+    public ChatService(PromptService promptService, OllamaService ollamaService, ObjectMapper objectMapper, List<ChatAction> actions) {
         this.promptService = promptService;
         this.ollamaService = ollamaService;
         this.objectMapper = objectMapper;
-        this.transacaoService = transacaoService;
-        this.saldoService = saldoService;
+        
+        this.actions = new HashMap<>();
+
+        for (ChatAction acao : actions) {
+            this.actions.put(acao.suporta(), acao);
+        } 
     }
 
     public OllamaService getOllamaService() {
@@ -38,14 +43,6 @@ public class ChatService {
 
     public ObjectMapper getObjectMapper() {
         return objectMapper;
-    }
-
-    public TransacaoService getTransacaoService() {
-        return transacaoService;
-    }
-
-    public SaldoService getSaldoService() {
-        return saldoService;
     }
 
     public ChatIntentDTO interpretar(String message) {
@@ -74,55 +71,25 @@ public class ChatService {
         }
     }
 
+    private String gerarConversa(String message) {
+        String template = promptService.loadPrompt("general-chat.txt");
+
+        return this.ollamaService.perguntar(template.formatted(message));
+    }
+
     public ChatResponseDTO processar(Integer utilizadorId, String message) {
         ChatIntentDTO intent = interpretar(message);
-        Object dados;
 
-        switch (intent.getAcao()) {
-            case CRIAR_TRANSACAO:
-                CriarTransacaoDTO dto = new CriarTransacaoDTO();
-                
-                dto.setUtilizadorId(utilizadorId);
-                dto.setCategoria(intent.getCategoria());
-                dto.setValor(intent.getValor());
-                dto.setTipo(intent.getTipo());
-                dto.setDescricao(intent.getDescricao());
+        if (intent.getAcao() == AcaoChat.CONSERVA_NORMAL) 
+            return new ChatResponseDTO(gerarConversa(message));
 
-                Transacao transacao = this.transacaoService.criar(dto);
-                dados = transacao;
-                break;  
+        ChatAction action = this.actions.get(intent.getAcao());
 
-            case CONSULTAR_TODAS_TRANSACOES:
-                List<Transacao> transacoes = transacaoService.listarTransacoesUtilizador(utilizadorId);
+        if (action == null) {
+            throw new RuntimeException("Unsupported action");
+        }   
 
-                dados = Map.of(
-                    "transactionCount",
-                    transacoes.size(),
-                    "transactions",
-                    transacoes
-                );
-    
-                break;
-            
-            case CONSULTAR_SALDO:
-                dados = this.saldoService.saldo(utilizadorId);
-                break;
-
-            case ULTIMAS_TRANSACOES:
-                dados = this.transacaoService.ultimasTransacoes(utilizadorId);
-                break;
-
-            case GASTOS_POR_CATEGORIA:
-                dados = this.transacaoService.gastosCategoria(utilizadorId);
-                break;
-
-            case GASTOS_PERIODO:
-                dados = this.transacaoService.gastoEntreDatas(utilizadorId, intent.getDataInicio(), intent.getDataFim());
-                break;
-
-            default:
-                throw new RuntimeException("Ação não suportada");
-        }
+        Object dados = action.executar(utilizadorId, intent);
 
         String resposta = gerarResposta(message, dados);
 

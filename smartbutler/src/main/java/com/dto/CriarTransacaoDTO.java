@@ -9,6 +9,14 @@ public class CriarTransacaoDTO {
     private String descricao;
     private String tipo;
 
+    public CriarTransacaoDTO(Integer utilizadorId, String categoria, BigDecimal valor, String descricao, String tipo) {
+        this.utilizadorId = utilizadorId;
+        this.categoria = categoria;
+        this.valor = valor;
+        this.descricao = descricao;
+        this.tipo = tipo;
+    }
+
     public String getTipo() {
         return tipo;
     }
