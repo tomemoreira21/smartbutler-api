@@ -1,4 +1,4 @@
-package com.ai;
+package com.ai.ollama;
 
 public class OllamaResponse {
     private String response;

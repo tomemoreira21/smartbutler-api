@@ -7,6 +7,7 @@ import java.util.Map;
 import org.springframework.stereotype.Service;
 
 import com.actions.ChatAction;
+import com.ai.AIService;
 import com.ai.dto.ChatIntentDTO;
 import com.ai.dto.ChatResponseDTO;
 import com.enums.AcaoChat;
@@ -16,14 +17,14 @@ import tools.jackson.databind.ObjectMapper;
 @Service
 public class ChatService {
     private final PromptService promptService;
-    private final OllamaService ollamaService;
+    private final AIService aiService;
     private final ObjectMapper objectMapper; // conversão de JSON -> objetos Java
     
     private Map<AcaoChat, ChatAction> actions;
 
-    public ChatService(PromptService promptService, OllamaService ollamaService, ObjectMapper objectMapper, List<ChatAction> actions) {
+    public ChatService(PromptService promptService, AIService service, ObjectMapper objectMapper, List<ChatAction> actions) {
         this.promptService = promptService;
-        this.ollamaService = ollamaService;
+        this.aiService = service;
         this.objectMapper = objectMapper;
         
         this.actions = new HashMap<>();
@@ -33,8 +34,8 @@ public class ChatService {
         } 
     }
 
-    public OllamaService getOllamaService() {
-        return ollamaService;
+    public AIService getAIService() {
+        return aiService;
     }
 
     public PromptService getPromptService() {
@@ -49,7 +50,9 @@ public class ChatService {
         String template = promptService.loadPrompt("finance-intent.txt");
         String prompt = template.formatted(message);
 
-        String resposta = ollamaService.perguntar(prompt);
+        System.out.print("Using " + this.aiService + "\n");
+
+        String resposta = aiService.perguntar(prompt);
 
         try {
             return objectMapper.readValue(resposta, 
@@ -65,7 +68,7 @@ public class ChatService {
             String jsonDados = objectMapper.writeValueAsString(dados);
 
             String prompt = template.formatted(mensagemUser,jsonDados);
-            return this.ollamaService.perguntar(prompt);
+            return this.aiService.perguntar(prompt);
         } catch (Exception e) {
             throw new RuntimeException("Erro ao gerar a resposta", e);
         }
@@ -74,13 +77,13 @@ public class ChatService {
     private String gerarConversa(String message) {
         String template = promptService.loadPrompt("general-chat.txt");
 
-        return this.ollamaService.perguntar(template.formatted(message));
+        return this.aiService.perguntar(template.formatted(message));
     }
 
     public ChatResponseDTO processar(Integer utilizadorId, String message) {
         ChatIntentDTO intent = interpretar(message);
 
-        if (intent.getAcao() == AcaoChat.CONSERVA_NORMAL) 
+        if (intent.getAcao() == AcaoChat.CONVERSA_NORMAL) 
             return new ChatResponseDTO(gerarConversa(message));
 
         ChatAction action = this.actions.get(intent.getAcao());
@@ -97,7 +100,12 @@ public class ChatService {
 
         System.out.println("Intent: " + intent);
 
-        System.out.println("Dados: " + dados);
+        System.out.println("ACAO = " + intent.getAcao());
+
+        System.out.println(
+            "DADOS = "
+            + objectMapper.writeValueAsString(dados)
+        );
 
         System.out.println("Resposta final: " + resposta);
 

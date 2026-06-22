@@ -1,19 +1,22 @@
 package com.services;
 
+import org.springframework.context.annotation.Primary;
 import org.springframework.stereotype.Service;
 import org.springframework.web.client.RestClient;
 
-import com.ai.OllamaRequest;
-import com.ai.OllamaResponse;
+import com.ai.AIService;
+import com.ai.ollama.OllamaRequest;
+import com.ai.ollama.OllamaResponse;
 
 @Service
-public class OllamaService {
+@Primary
+public class OllamaService implements AIService {
     private final RestClient restClient;
 
     public OllamaService() {
         this.restClient = RestClient.create("http://localhost:11434");
     }
-
+    
     public String perguntar(String prompt) {
         String model = "llama3.2";
 

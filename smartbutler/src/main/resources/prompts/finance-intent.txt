@@ -25,6 +25,7 @@ AVAILABLE ACTIONS:
 * ULTIMAS_TRANSACOES
 * GASTOS_POR_CATEGORIA
 * GASTOS_PERIODO
+* CONVERSA_NORMAL
 
 AVAILABLE TYPES:
 
@@ -70,6 +71,66 @@ CLASSIFICATION RULES:
 Use the closest matching category.
 If no category matches → Other.
 
+ACTION DEFINITIONS:
+
+CRIAR_TRANSACAO
+Use when the user records a new expense or income.
+
+Examples:
+- I spent 20 euros at Lidl
+- I paid 50 euros for fuel
+- I received my salary
+- Add an expense of 15 euros
+
+CONSULTAR_SALDO
+Use when the user asks for the current balance.
+
+Examples:
+- What is my balance?
+- How much money do I have?
+- Show my current balance
+
+CONSULTAR_TODAS_TRANSACOES
+Use when the user wants all transactions.
+
+Examples:
+- Show all transactions
+- List all my expenses and income
+- Show my complete history
+
+ULTIMAS_TRANSACOES
+Use when the user asks about recent activity.
+
+Examples:
+- Show my last transactions
+- What have I spent recently?
+- How are my transactions going lately?
+- Show recent activity
+- What happened in the last few days?
+
+GASTOS_POR_CATEGORIA
+Use when the user wants spending grouped or filtered by category.
+
+Examples:
+- How much did I spend on groceries?
+- Show spending by category
+- How much have I spent on transport?
+- What category do I spend the most on?
+
+GASTOS_PERIODO
+Use when the user specifies a date range or period.
+
+Examples:
+- Show expenses from June
+- Show transactions between 1 June and 15 June
+- What did I spend yesterday?
+- Show transactions from last week
+- Show transactions from this month
+- Expenses between yesterday and today
+
+CONVERSA_NORMAL
+Use only when the message is not related to personal finances.
+
 Required format:
 
 {
@@ -82,7 +143,63 @@ Required format:
 "dataFim": null
 }
 
+CONVERSA_NORMAL RULES:
+
+Use CONVERSA_NORMAL when the message:
+
+- Is a greeting.
+- Is small talk.
+- Is unrelated to personal finances.
+- Is a general knowledge question.
+- Is asking about the assistant itself.
+- Does not require database access.
+- Does not request financial information.
+- Does not request financial calculations.
+- Does not create a transaction.
+
 Examples:
+
+Message:
+"Hello"
+
+Response:
+{
+  "acao": "CONVERSA_NORMAL",
+  "categoria": null,
+  "valor": null,
+  "descricao": null,
+  "tipo": null,
+  "dataInicio": null,
+  "dataFim": null
+}
+
+Message:
+"How are you?"
+
+Response:
+{
+  "acao": "CONVERSA_NORMAL",
+  "categoria": null,
+  "valor": null,
+  "descricao": null,
+  "tipo": null,
+  "dataInicio": null,
+  "dataFim": null
+}
+
+Message:
+"What is Java?"
+
+Response:
+{
+  "acao": "CONVERSA_NORMAL",
+  "categoria": null,
+  "valor": null,
+  "descricao": null,
+  "tipo": null,
+  "dataInicio": null,
+  "dataFim": null
+}
 
 Message:
 "I spent 20 euros in a restaurant"
@@ -128,4 +245,8 @@ Response:
 
 User message:
 
-%s
+"%s"
+
+Determine the most appropriate action.
+
+If the message does not represent a financial operation or a financial query, use CONVERSA_NORMAL.
