@@ -4,6 +4,15 @@ public class CriarUtilizadorDTO {
     private String nome;
     private String email;
 
+    public CriarUtilizadorDTO(String nome, String email) {
+        this.nome = nome;
+        this.email = email;
+    }
+
+    public CriarUtilizadorDTO() {
+        
+    }
+
     public String getNome() {
         return nome;
     }
