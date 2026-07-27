@@ -166,6 +166,6 @@ What are my biggest expenses?
 
 ### CLI
 
-![SmartButler CLI](images/cli-demo.png)
+![SmartButler CLI](smartbutler/images/cli-demo.png)
 
 ---
